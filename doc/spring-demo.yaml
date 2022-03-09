@@ -1,0 +1,10 @@
+logging:
+  path: /home/daison/admin/logs/daison-thirdplatform
+  config: classpath:logback-spring.xml
+  level:
+    #com.listenrobot.common.http.filter.HttpLoggingFilter: DEBUG
+    org.springframework.data.mongodb.core: DEBUG
+    java.sql.PreparedStatement: DEBUG
+    java.sql.Statement: DEBUG
+    java.sql.Connection: DEBUG
+    com.goo: DEBUG

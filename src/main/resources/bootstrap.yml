@@ -1,0 +1,12 @@
+server:
+  port: 8093
+  servlet:
+    #设置项目访问路径，http://localhost:8093/thirdplatform/swagger-ui.html
+    context-path: /demo
+spring:
+  application:
+    #  服务名称及 注册服务dataID
+    name: springcloud-nacos
+  #  # 环境 dev|prod|test|release
+  profiles:
+    active: dev

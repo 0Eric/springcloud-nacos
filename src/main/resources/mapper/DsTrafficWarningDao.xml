@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.demo.third.device.dao.DsTrafficWarningDao">
+
+    <!-- 查询sql语句velocity来生成sql代码段，
+    其作用是遍历某张表的所有列，列名之间用逗号隔开，如果是最后一列则不添加逗号-->
+    <sql id="Base_Column_List">
+      select
+        a.id ,
+        a.road_code_id ,
+        b.road_code_name,
+        a.road_section_id ,
+        c.road_section_name,
+        a.level ,
+        a.device_type ,
+        a.event_type ,
+        a.vehicle_Ids ,
+        a.dev_list ,
+        a.light_range ,
+        a.status ,
+        a.start_time ,
+        a.end_time ,
+        a.remark ,
+        a.creator ,
+        a.create_date ,
+        a.updater ,
+        a.update_date
+      from ds_traffic_warning as a
+      LEFT JOIN beacon_road_code AS b ON b.id = a.road_code_id
+      LEFT JOIN beacon_road_section AS c ON c.id = a.road_section_id
+    </sql>
+    <!-- 查询条件-->
+    <sql id="wheresql">
+        <if test=" id !=null ">
+            and a.id = #{id}
+        </if>
+        <if test=" roadCodeId !=null ">
+            and a.road_code_id = #{roadCodeId}
+        </if>
+        <if test=" roadSectionId !=null ">
+            and a.road_section_id = #{roadSectionId}
+        </if>
+        <if test=" deviceType !=null ">
+            and a.device_type = #{deviceType}
+        </if>
+        <if test=" level !=null ">
+            and a.level = #{level}
+        </if>
+        <if test=" eventType !=null ">
+            and a.event_type = #{eventType}
+        </if>
+        <if test=" vehicleIds !=null and vehicleIds !='' ">
+            and a.vehicle_Ids = #{vehicleIds}
+        </if>
+        <if test=" devList !=null and devList !='' ">
+            and a.dev_list = #{devList}
+        </if>
+        <if test=" lightRange !=null ">
+            and a.light_range = #{lightRange}
+        </if>
+        <if test=" status !=null ">
+            and a.status = #{status}
+        </if>
+        <if test=" startTime !=null ">
+            <![CDATA[ and a.start_time >= #{startTime} ]]>
+        </if>
+        <if test=" endTime !=null ">
+            <![CDATA[ and a.end_time <= #{endTime} ]]>
+        </if>
+
+        <if test=" orderField != null and orderField !='' ">
+            order by a.${orderField} ${order}
+        </if>
+        <if test=" orderField == null or orderField =='' ">
+            order by a.create_date desc
+        </if>
+    </sql>
+
+    <!-- 分页查询数据-->
+    <select id="getPage" parameterType="com.demo.third.device.vo.DsTrafficWarningVo"
+            resultType="com.demo.third.device.dto.DsTrafficWarningDto">
+        select * from (
+        <include refid="Base_Column_List"></include>
+        ) as a where 1=1
+        <include refid="wheresql"></include>
+        limit #{startIndex},#{limit}
+    </select>
+
+    <!-- 查询总数-->
+    <select id="getCount" parameterType="com.demo.third.device.vo.DsTrafficWarningVo"
+            resultType="Long">
+        select count(*) from(
+        <include refid="Base_Column_List"></include>
+        )as a where 1=1
+        <include refid="wheresql"></include>
+    </select>
+
+    <!-- 根据id查询-->
+    <select id="getById" parameterType="java.lang.Long"
+            resultType="com.demo.third.device.dto.DsTrafficWarningDto">
+        select * from (
+        <include refid="Base_Column_List"></include>
+        ) as a where a.id = #{id}
+    </select>
+
+    <!-- 查询数据-->
+    <select id="find" parameterType="com.demo.third.device.vo.DsTrafficWarningVo"
+            resultType="com.demo.third.device.dto.DsTrafficWarningDto">
+        select * from (
+        <include refid="Base_Column_List"></include>
+        ) as a where 1=1
+        <include refid="wheresql"></include>
+    </select>
+
+    <update id="updateByRoadSectionId"
+            parameterType="com.demo.third.device.entity.DsTrafficWarningEntity">
+        update ds_traffic_warning
+        set status=#{status},update_date=#{updateDate},end_time=#{endTime}
+        where road_section_id=#{roadSectionId}
+        and event_type=#{eventType}
+    </update>
+
+</mapper>

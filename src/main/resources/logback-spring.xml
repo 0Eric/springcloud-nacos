@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true">
+    <springProperty scope="context" name="logLevel" source="logging.level.root"/>
+    <springProperty scope="context" name="logPath" source="logging.path"/>
+    <springProperty scope="context" name="fileName" source="spring.application.name"/>
+    <springProperty scope="context" name="serverPort" source="server.port"/>
+    <!--0. 日志格式和颜色渲染 -->
+    <conversionRule conversionWord="clr" converterClass="org.springframework.boot.logging.logback.ColorConverter" />
+    <conversionRule conversionWord="wex" converterClass="org.springframework.boot.logging.logback.WhitespaceThrowableProxyConverter" />
+    <conversionRule conversionWord="wEx" converterClass="org.springframework.boot.logging.logback.ExtendedWhitespaceThrowableProxyConverter" />
+    <!-- 彩色日志格式 -->
+    <property name="CONSOLE_LOG_PATTERN" value="${CONSOLE_LOG_PATTERN:-%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(${PID:- }){magenta} %clr(${fileName:- }) %clr(localhost) %clr(${serverPort:- }) %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}}"/>
+    <!--配置日志输出路径（测试配置）-->
+<!--
+    <property name="CONSOLE_LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n" />&lt;!&ndash;配置日志输出路径（测试配置）&ndash;&gt;
+-->
+    <!-- Console output -->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>
+                ${CONSOLE_LOG_PATTERN}
+                <!-- %date  %-4level  ${PID:- } [%20thread]  %logger{50} :  %msg%n-->
+                <!--[%date] [%-4level] [%line] [%thread] [%logger{50}.%method] - %msg%n-->
+            </pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>DEBUG</level>
+        </filter>
+    </appender>
+
+    <!-- DEBUG output -->
+    <appender name="DEBUG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${logPath}/${fileName}-debug.log</file>
+        <append>true</append>
+        <encoder>
+            <pattern>
+                ${CONSOLE_LOG_PATTERN}
+                <!--%date  %-4level ${PID:- } [%10thread]  %logger{50}  :  %msg%n-->
+            </pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>DEBUG</level>
+        </filter>
+        <!-- 日志记录器的滚动策略，按日期，按大小记录 -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!-- 日志归档 -->
+            <fileNamePattern>${logPath}/${fileName}-debug-%d{yyyyMMdd}.%i.log.zip</fileNamePattern>
+            <!--单个日志文件最大值，达到之后就进行切割-->
+            <maxFileSize>100MB</maxFileSize>
+            <!--:日志文件最多保留的天数，也就是过期时间-->
+            <maxHistory>15</maxHistory>
+            <!-- 日志文件总体的最大值，达到之后就不再产生日志 -->
+            <totalSizeCap>3GB</totalSizeCap>
+            <!--启动项目时是否删除归档的历史日志文件-->
+            <cleanHistoryOnStart>true</cleanHistoryOnStart>
+        </rollingPolicy>
+        <!-- 此日志文档只记录debug级别的 -->
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>debug</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+    <!-- WARN output -->
+    <appender name="WARN" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${logPath}/${fileName}-warn.log</file>
+        <append>true</append>
+        <encoder>
+            <pattern>
+                ${CONSOLE_LOG_PATTERN}
+                <!--[%date][%-4level][%line][%thread]logId:[%X{logId}]traceId:[%X{traceId}]call[%logger][%method]=> %msg%n-->
+                <!--%date  %-4level ${PID:- } [%10thread]  %logger{50}  :  %msg%n-->
+            </pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+        <!-- 日志记录器的滚动策略，按日期，按大小记录 -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!-- 日志归档 -->
+            <fileNamePattern>${logPath}/${fileName}-warn-%d{yyyyMMdd}.%i.log.zip</fileNamePattern>
+            <!--单个日志文件最大值，达到之后就进行切割-->
+            <maxFileSize>100MB</maxFileSize>
+            <!--:日志文件最多保留的天数，也就是过期时间-->
+            <maxHistory>15</maxHistory>
+            <!-- 日志文件总体的最大值，达到之后就不再产生日志 -->
+            <totalSizeCap>3GB</totalSizeCap>
+            <!--启动项目时是否删除归档的历史日志文件-->
+            <cleanHistoryOnStart>true</cleanHistoryOnStart>
+        </rollingPolicy>
+        <!-- 此日志文档只记录debug级别的 -->
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>warn</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+    <!-- INFO output -->
+    <appender name="INFO" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${logPath}/${fileName}-info.log</file>
+        <append>true</append>
+        <!--日志文档输出格式-->
+        <encoder>
+            <pattern>
+                ${CONSOLE_LOG_PATTERN}
+                <!-- %date  %-4level ${PID:- } [%10thread]  %logger{50}  :  %msg%n-->
+            </pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+        <!-- 日志记录器的滚动策略，按日期，按大小记录 -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!-- 日志归档 -->
+            <fileNamePattern>${logPath}/${fileName}-info-%d{yyyyMMdd}.%i.log.zip</fileNamePattern>
+            <!--单个日志文件最大值，达到之后就进行切割-->
+            <maxFileSize>100MB</maxFileSize>
+            <!--:日志文件最多保留的天数，也就是过期时间-->
+            <maxHistory>15</maxHistory>
+            <!-- 日志文件总体的最大值，达到之后就不再产生日志 -->
+            <totalSizeCap>3GB</totalSizeCap>
+            <!--启动项目时是否删除归档的历史日志文件-->
+            <cleanHistoryOnStart>true</cleanHistoryOnStart>
+        </rollingPolicy>
+        <!-- 此日志文档只记录debug级别的 -->
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>info</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+    <!-- DEBUG output -->
+    <appender name="ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${logPath}/${fileName}-error.log</file>
+        <append>true</append>
+        <encoder>
+            <pattern>
+                ${CONSOLE_LOG_PATTERN}
+            </pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>DEBUG</level>
+        </filter>
+        <!-- 日志记录器的滚动策略，按日期，按大小记录 -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!-- 日志归档 -->
+            <fileNamePattern>${logPath}/${fileName}-error-%d{yyyyMMdd}.%i.log.zip</fileNamePattern>
+            <!--单个日志文件最大值，达到之后就进行切割-->
+            <maxFileSize>100MB</maxFileSize>
+            <!--:日志文件最多保留的天数，也就是过期时间-->
+            <maxHistory>15</maxHistory>
+            <!-- 日志文件总体的最大值，达到之后就不再产生日志 -->
+            <totalSizeCap>3GB</totalSizeCap>
+            <!--启动项目时是否删除归档的历史日志文件-->
+            <cleanHistoryOnStart>true</cleanHistoryOnStart>
+        </rollingPolicy>
+        <!-- 此日志文档只记录debug级别的 -->
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>error</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+    <!--logstash地址，从application.properties中获取
+   <springProperty scope="context" name="LOGSTASH_ADDRESS" source="logstash.address"/>-->
+    <!--elk 日志-->
+    <appender name="ELASTIC" class="com.internetitem.logback.elasticsearch.ElasticsearchAppender">
+        <url>http://120.79.51.144:9200/_bulk</url>
+        <index>logs-server-%date{yyyy.MM.dd}</index>
+        <type>log</type>
+        <includeMdc>true</includeMdc>
+        <!-- <authentication class="com.internetitem.logback.elasticsearch.config.BasicAuthentication" />-->
+        <properties>
+            <property>
+                <name>app_name</name>
+                <value>daison-server</value>
+            </property>
+            <property>
+                <name>host</name>
+                <value>${HOSTNAME}</value>
+                <allowEmpty>false</allowEmpty>
+            </property>
+            <property>
+                <name>level</name>
+                <value>%level</value>
+            </property>
+            <property>
+                <name>thread</name>
+                <value>%thread</value>
+            </property>
+            <property>
+                <name>stacktrace</name>
+                <value>%ex</value>
+            </property>
+            <property>
+                <name>logger</name>
+                <value>%logger</value>
+            </property>
+            <!--            <property>-->
+            <!--                <name>run_timestamp</name>-->
+            <!--                <value>%X{run_timestamp}</value>-->
+            <!--            </property>-->
+            <!--            <property>-->
+            <!--                <name>marker</name>-->
+            <!--                <value>%marker</value>-->
+            <!--            </property>-->
+        </properties>
+        <headers>
+            <header>
+                <name>Content-Type</name>
+                <value>application/json</value>
+            </header>
+        </headers>
+    </appender>
+
+    <!--level:用来设置打印级别（日志级别）大小写无关：TRACE, DEBUG, INFO, WARN, ERROR, ALL 和 OFF-->
+    <!--还有一个特殊值INHERITED或者同义词NULL，代表强制执行上级的级别，如果未设置此属性，那么当前loger将会继承上级的级别-->
+    <!-- 开发、测试环境:输出到文档 -->
+    <springProfile name="dev,test,release">
+        <root level="INFO">
+            <appender-ref ref="STDOUT" />
+            <appender-ref ref="DEBUG" />
+            <appender-ref ref="WARN" />
+            <appender-ref ref="INFO" />
+            <appender-ref ref="ERROR" />
+            <!--<appender-ref ref="ELASTIC" />-->
+        </root>
+    </springProfile>
+    <springProfile name="prod">
+        <root level="INFO">
+            <appender-ref ref="STDOUT" />
+            <appender-ref ref="DEBUG" />
+            <appender-ref ref="WARN" />
+            <appender-ref ref="INFO" />
+            <appender-ref ref="ERROR" />
+            <!--<appender-ref ref="ELASTIC" />-->
+        </root>
+    </springProfile>
+</configuration>

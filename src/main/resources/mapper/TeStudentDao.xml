@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.demo.third.device.dao.TeStudentDao">
+
+    <select id="selectAllStudent" resultType="com.demo.third.device.entity.Student"
+            parameterType="com.demo.third.device.vo.TeStudentVo">
+        select SId, Sname, Sage, Ssex from te_student
+        <where>
+            <if test="sid != null and sid != ''">
+                and SId = #{sid}
+            </if>
+            <if test="sname != null and sname != ''">
+                and Sname like '%${sname}%'
+            </if>
+            <if test="ssex != null and ssex != ''">
+                and Ssex = #{ssex}
+            </if>
+        </where>
+    </select>
+
+
+</mapper>
