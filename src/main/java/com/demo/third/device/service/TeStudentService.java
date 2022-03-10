@@ -1,6 +1,7 @@
 package com.demo.third.device.service;
 
-import com.demo.third.device.dto.TeStudentDto;
+import com.demo.third.device.dto.ResponseMessage;
+import com.demo.third.device.vo.StudentScoreVo;
 import com.demo.third.device.vo.TeStudentVo;
 
 /**
@@ -15,5 +16,35 @@ public interface TeStudentService {
      * @author: liuqiang
      * @date: 2022/3/8 17:08
      **/
-    TeStudentDto queryStudentInfo(TeStudentVo teStudentVo);
+    ResponseMessage queryStudentInfo(TeStudentVo teStudentVo);
+
+    /**
+     * @param studentScoreVo
+     * @return
+     * @Description: 通过学号获取平均成绩
+     * @author liuqiang
+     * @date 2022/3/9 11:57
+     * @Exception
+     */
+    ResponseMessage queryScoreBySno(StudentScoreVo studentScoreVo);
+
+    /**
+     * @Description: 查询所有学生的课程，成绩信息
+     * @author liuqiang
+     * @date 2022/3/9 15:21
+     * @param  studentScoreVo
+     * @return
+     * @Exception
+     */
+    ResponseMessage queryAllInfo(StudentScoreVo studentScoreVo);
+
+    /**
+     * @Description:查询各科成绩前三名的记录
+     * @author liuqiang
+     * @date 2022/3/9 15:43
+     * @param
+     * @return
+     * @Exception
+     */
+    ResponseMessage queryScoreByCourse();
 }

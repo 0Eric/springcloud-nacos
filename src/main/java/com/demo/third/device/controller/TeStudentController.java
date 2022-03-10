@@ -1,15 +1,13 @@
 package com.demo.third.device.controller;
 
-import com.demo.third.device.dto.TeStudentDto;
+import com.demo.third.device.dto.ResponseMessage;
 import com.demo.third.device.service.TeStudentService;
+import com.demo.third.device.vo.StudentScoreVo;
 import com.demo.third.device.vo.TeStudentVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("stu")
@@ -21,8 +19,25 @@ public class TeStudentController {
 
     @ApiOperation(value = "学生信息列表")
     @PostMapping("/list")
-    public TeStudentDto list(@RequestBody TeStudentVo teStudentVo) {
+    public ResponseMessage list(@RequestBody TeStudentVo teStudentVo) {
         return teStudentService.queryStudentInfo(teStudentVo);
     }
 
+    @ApiOperation(value = "查询成绩信息")
+    @PostMapping("/queryScore")
+    public ResponseMessage queryScore(@RequestBody StudentScoreVo studentScoreVo) {
+        return teStudentService.queryScoreBySno(studentScoreVo);
+    }
+
+    @ApiOperation(value = "查询所有学生课程成绩信息")
+    @PostMapping("/queryAllInfo")
+    public ResponseMessage queryAllInfo(@RequestBody StudentScoreVo studentScoreVo) {
+        return teStudentService.queryAllInfo(studentScoreVo);
+    }
+
+    @ApiOperation(value = "查询各科成绩前三名的记录")
+    @GetMapping("/queryScoreByCourse")
+    public ResponseMessage queryScoreByCourse() {
+        return teStudentService.queryScoreByCourse();
+    }
 }
