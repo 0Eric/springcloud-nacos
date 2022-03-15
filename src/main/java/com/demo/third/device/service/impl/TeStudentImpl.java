@@ -1,20 +1,23 @@
 package com.demo.third.device.service.impl;
 
 import com.demo.third.device.constant.Constant;
+import com.demo.third.device.dao.CommonDao;
 import com.demo.third.device.dao.TeStudentDao;
 import com.demo.third.device.dto.ResponseMessage;
 import com.demo.third.device.dto.TeScoreDto;
 import com.demo.third.device.dto.TeStudentScoreDto;
+import com.demo.third.device.entity.Dic;
+import com.demo.third.device.entity.Score;
 import com.demo.third.device.entity.Student;
+import com.demo.third.device.service.DicService;
 import com.demo.third.device.service.TeStudentService;
-import com.demo.third.device.util.DateUtil;
 import com.demo.third.device.util.ResponseUtil;
+import com.demo.third.device.util.StringUtils;
 import com.demo.third.device.vo.StudentScoreVo;
 import com.demo.third.device.vo.TeStudentVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,6 +35,12 @@ public class TeStudentImpl implements TeStudentService {
     @Autowired
     private TeStudentDao teStudentDao;
 
+    @Autowired
+    private DicService dicService;
+
+    @Autowired
+    private CommonDao commonDao;
+
     /**
      * @Describe: 获取所有学生的基本信息
      * @author: liuqiang
@@ -40,25 +49,14 @@ public class TeStudentImpl implements TeStudentService {
     @Override
     public ResponseMessage queryStudentInfo(TeStudentVo teStudentVo) {
         ResponseMessage message = ResponseUtil.wrapSuccessResponse();
-        List<Student> manList = new ArrayList<>();
-        List<Student> womanList = new ArrayList<>();
         try {
-            List<Student> allStudent = teStudentDao.selectAllStudent(teStudentVo);
-            if (!CollectionUtils.isEmpty(allStudent)) {
-                for (Student student : allStudent) {
-                    String sSex = student.getSsex();
-                    student.setSage(DateUtil.getAge(DateUtil.parse(student.getSage())) + "");
-                    if (Constant.STUDENT_SEX_MAN.equals(sSex)) {
-                        manList.add(student);
-                    } else if (Constant.STUDENT_SEX_WOMAN.equals(sSex)) {
-                        womanList.add(student);
-                    }
-                    Map<String, List<Student>> resultMap = new HashMap<>();
-                    resultMap.put("man", manList);
-                    resultMap.put("woman", womanList);
-                    message.setData(resultMap);
-                }
+            String sex = teStudentVo.getSsex();
+            if (StringUtils.isNotEmpty(sex)) {
+                teStudentVo.setSsex(dicService.queryAllDicByCode(geneDic(sex, Constant.DIC_TYPE_SEX)));
             }
+            List<Student> allStudent = teStudentDao.selectAllStudent(teStudentVo);
+
+            message.setData(allStudent);
         } catch (Exception e) {
             message = ResponseUtil.wrapExceptionResponse(e);
         }
@@ -93,7 +91,7 @@ public class TeStudentImpl implements TeStudentService {
                         studentScores = teStudentDao.queryScoreFail(studentScoreVo.getSid());
                         break;
                 }
-                message.setData(studentScores);
+                message.setData(obtainStudentName(studentScores));
             }
         } catch (Exception e) {
             message = ResponseUtil.wrapExceptionResponse(e);
@@ -139,4 +137,99 @@ public class TeStudentImpl implements TeStudentService {
         }
         return message;
     }
+
+    /**
+     * @return
+     * @Description:查询前三名的各科成绩
+     * @author liuqiang
+     * @date 2022/3/14 10:47
+     * @Exception
+     */
+    @Override
+    public ResponseMessage queryScoreTopThree() {
+        ResponseMessage message = ResponseUtil.wrapSuccessResponse();
+        List<List<String>> resultList = new ArrayList<>();
+        try {
+            List<String> courseList = geneCourseList("");
+            List<TeStudentScoreDto> studentScores = teStudentDao.queryScoreTopThree();
+            for (TeStudentScoreDto dto : studentScores) {
+                List<String> scoreList = geneScoreList(dto.getSid(), courseList);
+                scoreList.add(0, geneStudentNameBySid(dto.getSid()));
+                resultList.add(scoreList);
+            }
+            courseList.clear();
+            courseList.add("class");
+            courseList.addAll(geneCourseList("1"));
+            resultList.add(0,courseList);
+            message.setData(resultList);
+        } catch (Exception e) {
+            message = ResponseUtil.wrapExceptionResponse(e);
+        }
+
+        return message;
+    }
+
+    //获取学生姓名和成绩
+    private Map obtainStudentName(List<TeStudentScoreDto> studentVos) {
+        Map<String, List<String>> resultMap = new HashMap<>();
+        List<String> nameList = new ArrayList<>();
+        List<String> scoreList = new ArrayList<>();
+        for (TeStudentScoreDto student : studentVos) {
+            nameList.add(student.getSname());
+            scoreList.add(student.getAvgscore());
+        }
+        resultMap.put("name", nameList);
+        resultMap.put("score", scoreList);
+        return resultMap;
+    }
+
+    //通过类型和代码生成字典表实体
+    private Dic geneDic(String code, String type) {
+        Dic dic = new Dic();
+        dic.setCode(code);
+        dic.setType(type);
+        return dic;
+    }
+
+    //获取所有的课程
+    private List<String> geneCourseList(String type) {
+        List<String> courseList = new ArrayList<>();
+        List<Dic> dics = commonDao.selectAllDic(Constant.DIC_TYPE_COURSE);
+        for (Dic dic : dics) {
+            if (StringUtils.isNotEmpty(type)) {
+                courseList.add(dic.getName());
+            } else {
+                courseList.add(dic.getCode());
+            }
+        }
+        return courseList;
+    }
+
+    //根据学号和课程号获取学生的成绩
+    private List<String> geneScoreList(String sid, List<String> cids) {
+        List<String> scoreList = new ArrayList<>();
+        for (String cid : cids) {
+            StudentScoreVo d = new StudentScoreVo();
+            d.setCid(cid);
+            d.setSid(sid);
+            List<Score> scores = teStudentDao.queryScoreBySid(d);
+            if (!CollectionUtils.isEmpty(scores)) {
+                scoreList.add(scores.get(0).getScore());
+            }
+        }
+        return scoreList;
+    }
+
+    //根据学号获取名称
+    private String geneStudentNameBySid(String sid) {
+        String name = "";
+        TeStudentVo teStudentVo = new TeStudentVo();
+        teStudentVo.setSid(sid);
+        List<Student> allStudent = teStudentDao.selectAllStudent(teStudentVo);
+        if (!CollectionUtils.isEmpty(allStudent)) {
+            name = allStudent.get(0).getSname();
+        }
+        return name;
+    }
+
 }

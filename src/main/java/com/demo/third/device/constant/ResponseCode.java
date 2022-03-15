@@ -13,6 +13,7 @@ public enum ResponseCode {
     SUCCESS("0000", "成功"),
     EMPTY("3000", "参数缺失"),
     EXCEPTION("4000", "系统异常"),
+    SQLQUERYEXCEPTION("4001", "SQL查询异常"),
     TEST("xxxx", "xxxx");
 
 

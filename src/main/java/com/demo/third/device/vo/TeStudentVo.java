@@ -11,6 +11,6 @@ public class TeStudentVo {
     private String sid;
     @ApiModelProperty(value = "姓名", name = "sname", dataType = "String")
     private String sname;
-    @ApiModelProperty(value = "性别", name = "ssex", dataType = "String")
+    @ApiModelProperty(value = "性别 1:男  2：女", name = "ssex", dataType = "String")
     private String ssex;
 }

@@ -47,4 +47,14 @@ public interface TeStudentService {
      * @Exception
      */
     ResponseMessage queryScoreByCourse();
+
+    /**
+     * @Description:查询前三名的各科成绩
+     * @author liuqiang
+     * @date 2022/3/14 10:47
+     * @param
+     * @return
+     * @Exception
+     */
+    ResponseMessage queryScoreTopThree();
 }

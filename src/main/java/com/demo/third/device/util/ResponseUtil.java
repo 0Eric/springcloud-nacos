@@ -33,6 +33,21 @@ public class ResponseUtil {
         message.getHead().setCode(ResponseCode.EXCEPTION.getCode());
         return message;
     }
+    //返回异常响应
+    public static ResponseMessage wrapExceptionResponse() {
+        ResponseMessage message = new ResponseMessage();
+        message.getHead().setMsg(ResponseCode.EXCEPTION.getMsg());
+        message.getHead().setCode(ResponseCode.EXCEPTION.getCode());
+        return message;
+    }
+
+    //返回异常响应
+    public static ResponseMessage wrapSqlQueryExceptionResponse() {
+        ResponseMessage message = new ResponseMessage();
+        message.getHead().setMsg(ResponseCode.SQLQUERYEXCEPTION.getMsg() );
+        message.getHead().setCode(ResponseCode.SQLQUERYEXCEPTION.getCode());
+        return message;
+    }
 
 
 }

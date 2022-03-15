@@ -4,7 +4,7 @@
 
     <select id="selectAllStudent" resultType="com.demo.third.device.entity.Student"
             parameterType="com.demo.third.device.vo.TeStudentVo">
-        select SId, Sname, Sage, Ssex from te_student
+        SELECT ROUND(DATEDIFF(CURDATE(), Sage)/365.2422) as Sage,SId, Sname,Ssex from te_student
         <where>
             <if test="sid != null and sid != ''">
                 and SId = #{sid}
@@ -21,7 +21,7 @@
     <select id="queryScoreBySno" parameterType="java.lang.String"
             resultType="com.demo.third.device.dto.TeStudentScoreDto">
         select ts.SId, ts.Sname, t.avgscore from te_student ts
-        inner join (select avg(tsc.score) as avgscore, tsc.SId from te_sc tsc group by tsc.SId) t
+        inner join (select round(avg(tsc.score),2) as avgscore, tsc.SId from te_sc tsc group by tsc.SId) t
         on ts.SId = t.SId
         <where>
             <if test="sid != null and sid != ''">
@@ -33,7 +33,7 @@
     <select id="queryScorePass" parameterType="java.lang.String"
             resultType="com.demo.third.device.dto.TeStudentScoreDto">
         select ts.SId, ts.Sname, t.avgscore from te_student ts
-        inner join (select avg(tsc.score) as avgscore, tsc.SId from te_sc tsc group by tsc.SId having avgscore
+        inner join (select round(avg(tsc.score),2) as avgscore, tsc.SId from te_sc tsc group by tsc.SId having avgscore
         <![CDATA[>=]]> 60) t
         on ts.SId = t.SId
         <where>
@@ -46,7 +46,7 @@
     <select id="queryScoreFail" parameterType="java.lang.String"
             resultType="com.demo.third.device.dto.TeStudentScoreDto">
         select ts.SId, ts.Sname, t.avgscore from te_student ts
-        inner join (select avg(tsc.score) as avgscore, tsc.SId from te_sc tsc group by tsc.SId having avgscore
+        inner join (select round(avg(tsc.score),2) as avgscore, tsc.SId from te_sc tsc group by tsc.SId having avgscore
         <![CDATA[< ]]> 60) t
         on ts.SId = t.SId
         <where>
@@ -91,6 +91,27 @@
         select tsc3.CId, tsc3.score
         from (select * from te_sc where CId = '03' order by score desc limit 3) tsc3 ) a
         left join te_course tc on tc.cid = a.CId
+    </select>
+
+    <select id="queryScoreTopThree"
+            resultType="com.demo.third.device.dto.TeStudentScoreDto">
+        select ts.SId, ts.Sname, t.avgscore from te_student ts
+        inner join (select round(avg(tsc.score),2) as avgscore, tsc.SId from te_sc tsc group by tsc.SId) t
+        on ts.SId = t.SId
+       group by t.avgscore desc limit 3
+    </select>
+
+    <select id="queryScoreBySid" resultType="com.demo.third.device.entity.Score" parameterType="com.demo.third.device.vo.StudentScoreVo">
+        select sc.sid,sc.cid,sc.score from te_sc sc
+        <where>
+            <if test="sid != null and sid != ''">
+                and sc.SId = #{sid}
+            </if>
+            <if test="cid != null and cid != ''">
+                and sc.cid = #{cid}
+            </if>
+        </where>
+
     </select>
 
 </mapper>

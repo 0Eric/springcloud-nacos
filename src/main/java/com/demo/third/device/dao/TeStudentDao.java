@@ -2,6 +2,7 @@ package com.demo.third.device.dao;
 
 import com.demo.third.device.dto.TeScoreDto;
 import com.demo.third.device.dto.TeStudentScoreDto;
+import com.demo.third.device.entity.Score;
 import com.demo.third.device.entity.Student;
 import com.demo.third.device.vo.StudentScoreVo;
 import com.demo.third.device.vo.TeStudentVo;
@@ -38,5 +39,11 @@ public interface TeStudentDao {
 
     //查询各科成绩前三名的记录
     List<TeScoreDto> queryScoreByCourse();
+
+    //查询前三名的各科成绩
+    List<TeStudentScoreDto> queryScoreTopThree();
+
+    //查询某个学生的成绩
+    List<Score> queryScoreBySid(StudentScoreVo studentScoreVo);
 
 }

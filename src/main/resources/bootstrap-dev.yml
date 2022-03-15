@@ -331,6 +331,11 @@ mybatis-plus:
     call-setters-on-nulls: true
     jdbc-type-for-null: 'null'
 
+logging:
+  level:
+    com.demo.third.device.dao : debug
+
+
 ##多数据源的配置，需要引用192.168.0.87-commons-dynamic-datasource
 #dynamic:
 #  datasource:

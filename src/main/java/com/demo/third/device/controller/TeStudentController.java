@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("stu")
+@CrossOrigin
 @Api(tags = "学生信息接口")
 public class TeStudentController {
 
@@ -19,19 +20,19 @@ public class TeStudentController {
 
     @ApiOperation(value = "学生信息列表")
     @PostMapping("/list")
-    public ResponseMessage list(@RequestBody TeStudentVo teStudentVo) {
+    public ResponseMessage list(@RequestBody(required = false) TeStudentVo teStudentVo) {
         return teStudentService.queryStudentInfo(teStudentVo);
     }
 
     @ApiOperation(value = "查询成绩信息")
     @PostMapping("/queryScore")
-    public ResponseMessage queryScore(@RequestBody StudentScoreVo studentScoreVo) {
+    public ResponseMessage queryScore(@RequestBody(required = false) StudentScoreVo studentScoreVo) {
         return teStudentService.queryScoreBySno(studentScoreVo);
     }
 
     @ApiOperation(value = "查询所有学生课程成绩信息")
     @PostMapping("/queryAllInfo")
-    public ResponseMessage queryAllInfo(@RequestBody StudentScoreVo studentScoreVo) {
+    public ResponseMessage queryAllInfo(@RequestBody(required = false) StudentScoreVo studentScoreVo) {
         return teStudentService.queryAllInfo(studentScoreVo);
     }
 
@@ -39,5 +40,11 @@ public class TeStudentController {
     @GetMapping("/queryScoreByCourse")
     public ResponseMessage queryScoreByCourse() {
         return teStudentService.queryScoreByCourse();
+    }
+
+    @ApiOperation(value = "查询前三名的各科成绩")
+    @GetMapping("/queryScoreTopThree")
+    public ResponseMessage queryScoreTopThree() {
+        return teStudentService.queryScoreTopThree();
     }
 }

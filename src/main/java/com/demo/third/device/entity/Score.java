@@ -6,9 +6,10 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-@Data
+
 @ApiModel(value = "学生成绩信息")
 @TableName("te_sc")
+@Data
 public class Score {
 
   /**
@@ -20,7 +21,7 @@ public class Score {
   @ApiModelProperty(value = "课程编号", name = "cId", dataType = "String")
   private String cId;
   @ApiModelProperty(value = "成绩", name = "score", dataType = "String")
-  private double score;
+  private String score;
 
 
 }
