@@ -1,7 +1,5 @@
-<?xml version="1.0"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -28,7 +26,7 @@
         <daison-commons.version>1.0.2-SNAPSHOT</daison-commons.version>
         <daison-business.version>1.0.2-SNAPSHOT</daison-business.version>
 
-        <swagger.version>2.8.0</swagger.version>
+        <swagger.version>2.10.0</swagger.version>
         <docker.plugin.version>1.1.1</docker.plugin.version>
         <maven-jar-plugin.version>3.1.1</maven-jar-plugin.version>
         <junit.version>4.12</junit.version>
